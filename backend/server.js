@@ -6,6 +6,11 @@ const errorHandler = require('./middleware/errorMiddleware');
 const noteRoutes = require('./routes/noteRoutes');
 require('dotenv').config();
 
+if (!process.env.JWT_SECRET) {
+  logger.error('JWT_SECRET is not set. Exiting.');
+  process.exit(1);
+}
+
 const logger = require('./utils/logger');
 const db = require('./config/db');
 
@@ -18,15 +23,15 @@ app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
-app.get('/api/test-db', async (req, res) => {
+app.get('/api/test-db', async (req, res, next) => {
   try {
     const [rows] = await db.query('SELECT 1 + 1 AS result');
     res.json({ success: true, result: rows[0].result });
   } catch (err) {
-    logger.error({ err }, 'Database test query failed');
-    res.status(500).json({ success: false, error: err.message });
+    next(err); // let the global error handler deal with it — no raw err.message sent to client
   }
 });
+
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 app.use(errorHandler);
