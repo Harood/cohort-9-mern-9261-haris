@@ -5,16 +5,18 @@ const { createUser, findUserByEmail } = require('../models/userModel');
 const SALT_ROUNDS = 10;
 
 const registerUser = async (name, email, password) => {
-  const existingUser = await findUserByEmail(email);
-  if (existingUser) {
-    const error = new Error('Email already registered');
-    error.statusCode = 409;
-    throw error;
-  }
-
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-  const userId = await createUser(name, email, hashedPassword);
-  return { id: userId, name, email };
+  try {
+    const userId = await createUser(name, email, hashedPassword);
+    return { id: userId, name, email };
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      const error = new Error('Email already registered');
+      error.statusCode = 409;
+      throw error;
+    }
+    throw err;
+  }
 };
 
 const loginUser = async (email, password) => {

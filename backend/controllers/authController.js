@@ -3,27 +3,34 @@ const logger = require('../utils/logger');
 
 const signup = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { name, email, password } = req.body || {};
+    const trimmedEmail = email?.trim().toLowerCase();
+
+    if (!name?.trim() || !trimmedEmail || !password) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
 
-    const user = await registerUser(name, email, password);
+    const user = await registerUser(name.trim(), trimmedEmail, password);
     logger.info({ userId: user.id }, 'New user registered');
     res.status(201).json({ success: true, user });
   } catch (err) {
-    next(err); // passes to global error handler
+    next(err);
   }
 };
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const { email, password } = req.body || {};
+    const trimmedEmail = email?.trim().toLowerCase();
+
+    if (!trimmedEmail || !password) {
       return res.status(400).json({ success: false, message: 'Email and password are required' });
     }
 
-    const { token, user } = await loginUser(email, password);
+    const { token, user } = await loginUser(trimmedEmail, password);
     logger.info({ userId: user.id }, 'User logged in');
     res.status(200).json({ success: true, token, user });
   } catch (err) {
