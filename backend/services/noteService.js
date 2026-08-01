@@ -12,8 +12,9 @@ const addNote = async (userId, title, content) => {
     error.statusCode = 400;
     throw error;
   }
-  const noteId = await createNote(userId, title, content || '');
-  return { id: noteId, title, content };
+  const normalizedContent = content || '';
+  const noteId = await createNote(userId, title, normalizedContent);
+  return { id: noteId, title, content: normalizedContent };
 };
 
 const listNotes = async (userId) => {
