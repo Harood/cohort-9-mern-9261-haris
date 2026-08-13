@@ -1,3 +1,6 @@
+const { registerUser, loginUser } = require('../services/authService');
+const logger = require('../utils/logger');
+
 const signup = async (req, res, next) => {
   try {
     const { name, email, password } = req.body || {};
@@ -44,3 +47,5 @@ const login = async (req, res, next) => {
     next(err);
   }
 };
+
+module.exports = { signup, login };
