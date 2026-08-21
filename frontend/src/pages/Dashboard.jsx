@@ -4,6 +4,7 @@ import axiosInstance from '../api/axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import { Eye } from 'lucide-react';
 import ViewNoteModal from '../components/ViewNoteModal';
+import { sanitizeHtml } from '../utils/sanitize';
 
 const Dashboard = () => {
   const [notes, setNotes] = useState([]);
@@ -84,7 +85,7 @@ const Dashboard = () => {
                 <h3 className="font-semibold text-gray-800 truncate">{note.title}</h3>
                 <p
                   className="text-sm text-gray-500 mt-1 line-clamp-2"
-                  dangerouslySetInnerHTML={{ __html: note.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.content) }}
                 />
                 <p className="text-xs text-gray-400 mt-2">
                   {new Date(note.updated_at).toLocaleDateString()}

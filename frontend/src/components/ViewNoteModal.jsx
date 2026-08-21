@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { sanitizeHtml } from '../utils/sanitize';
 
 const ViewNoteModal = ({ note, onClose }) => {
   if (!note) return null;
@@ -18,7 +19,7 @@ const ViewNoteModal = ({ note, onClose }) => {
 
         <div
           className="prose prose-sm max-w-none text-gray-700"
-          dangerouslySetInnerHTML={{ __html: note.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.content) }}
         />
 
         <p className="text-xs text-gray-400 mt-6 pt-4 border-t border-gray-100">
