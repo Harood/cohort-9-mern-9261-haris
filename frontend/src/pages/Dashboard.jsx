@@ -83,7 +83,7 @@ const Dashboard = () => {
 
               <Link to={`/notes/${note.id}`} className="block pr-6">
                 <h3 className="font-semibold text-gray-800 truncate">{note.title}</h3>
-                <p
+                <div
                   className="text-sm text-gray-500 mt-1 line-clamp-2"
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(note.content) }}
                 />
