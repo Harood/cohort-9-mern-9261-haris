@@ -4,13 +4,22 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { marked } from 'marked';
+import Image from '@tiptap/extension-image';
 
 const TEXT_COLORS = ['#000000', '#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
 const HIGHLIGHT_COLORS = ['#FEF08A', '#BBF7D0', '#BFDBFE', '#FBCFE8', '#FED7AA'];
 
+const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
 const RichTextEditor = ({ content, onChange }) => {
   const editor = useEditor({
-    extensions: [StarterKit, TextStyle, Color, Highlight.configure({ multicolor: true })],
+    extensions: [StarterKit, TextStyle, Color, Highlight.configure({ multicolor: true }),  Image.configure({ inline: true, allowBase64: true }),],
     content: content || '',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -21,6 +30,22 @@ const RichTextEditor = ({ content, onChange }) => {
           'prose prose-sm max-w-none min-h-[250px] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
       },
       handlePaste(view, event) {
+        const items = event.clipboardData?.items;
+        if (items) {
+          for (const item of items) {
+            if (item.type.startsWith('image/')) {
+              const file = item.getAsFile();
+              if (file) {
+                fileToBase64(file).then((base64) => {
+                  editor.chain().focus().setImage({ src: base64 }).run();
+                });
+                event.preventDefault();
+                return true;
+              }
+            }
+          }
+        }
+
         const text = event.clipboardData?.getData('text/plain');
         const hasHtml = event.clipboardData?.getData('text/html');
 
@@ -30,6 +55,20 @@ const RichTextEditor = ({ content, onChange }) => {
           editor.commands.insertContent(html);
           event.preventDefault();
           return true;
+        }
+        return false;
+      },
+      handleDrop(view, event) {
+        const files = event.dataTransfer?.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          if (file.type.startsWith('image/')) {
+            fileToBase64(file).then((base64) => {
+              editor.chain().focus().setImage({ src: base64 }).run();
+            });
+            event.preventDefault();
+            return true;
+          }
         }
         return false;
       },
@@ -103,6 +142,26 @@ const Toolbar = ({ editor }) => {
       >
         Code
       </button>
+      <input
+        type="file"
+        accept="image/*"
+        id="image-upload"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            const base64 = await fileToBase64(file);
+            editor.chain().focus().setImage({ src: base64 }).run();
+          }
+          e.target.value = '';
+        }}
+      />
+      <label
+        htmlFor="image-upload"
+        className="px-2 py-1 text-sm rounded bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer"
+      >
+        🖼 Image
+      </label>
 
       <div className="w-px h-5 bg-gray-300 mx-1" />
 
