@@ -4,6 +4,8 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NoteEditor from './pages/NoteEditor';
 import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
+
 
 function App() {
   return (
@@ -35,6 +37,14 @@ function App() {
         }
       />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
