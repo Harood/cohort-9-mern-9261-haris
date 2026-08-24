@@ -85,8 +85,9 @@ const NoteEditor = () => {
 
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label htmlFor="note-title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
             <input
+              id="note-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
