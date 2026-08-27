@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotesIllustration from '../components/NotesIllustration';
+import { useTheme } from '../context/ThemeContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -11,6 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,12 +50,23 @@ const Login = () => {
 
         {/* Right panel — form */}
         <div className="md:w-1/2 p-10 flex flex-col justify-center dark:bg-slate-900">
-          <p
-            className="text-3xl text-indigo-600 mb-1"
-            style={{ fontFamily: "'Caveat', cursive" }}
-          >
-            SyncNote
-          </p>
+          <div className="flex items-start justify-between mb-1">
+            <p
+              className="text-3xl text-indigo-600"
+              style={{ fontFamily: "'Caveat', cursive" }}
+            >
+              SyncNote
+            </p>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-300 hover:border-indigo-300 hover:text-indigo-600 transition"
+              title={isDark ? 'Use light mode' : 'Use dark mode'}
+              aria-label={isDark ? 'Use light mode' : 'Use dark mode'}
+            >
+              {isDark ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+          </div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-8">Welcome back</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
