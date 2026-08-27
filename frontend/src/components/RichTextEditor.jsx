@@ -27,7 +27,7 @@ const RichTextEditor = ({ content, onChange }) => {
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm max-w-none min-h-[250px] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
+          'prose prose-sm dark:prose-invert max-w-none min-h-[250px] px-3 py-2 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400',
       },
       handlePaste(view, event) {
         const items = event.clipboardData?.items;
@@ -92,7 +92,12 @@ const Toolbar = ({ editor }) => {
     }`;
 
   return (
-    <div className="flex gap-1 mb-2 flex-wrap items-center">
+    <div
+      className="flex gap-1 mb-2 flex-wrap items-center"
+      onMouseDown={(event) => {
+        if (event.target.closest('button')) event.preventDefault();
+      }}
+    >
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -102,7 +107,7 @@ const Toolbar = ({ editor }) => {
       </button>
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={() => editor.chain().focus().extendMarkRange('italic').toggleItalic().run()}
         className={btnClass(editor.isActive('italic'))}
       >
         Italic
@@ -171,7 +176,7 @@ const Toolbar = ({ editor }) => {
         <button
           key={color}
           type="button"
-          onClick={() => editor.chain().focus().setColor(color).run()}
+          onClick={() => editor.chain().focus().extendMarkRange('textStyle').setColor(color).run()}
           className="w-5 h-5 rounded-full border border-gray-300"
           style={{ backgroundColor: color }}
           title={`Text color ${color}`}
@@ -179,7 +184,7 @@ const Toolbar = ({ editor }) => {
       ))}
       <button
         type="button"
-        onClick={() => editor.chain().focus().unsetColor().run()}
+        onClick={() => editor.chain().focus().extendMarkRange('textStyle').unsetColor().run()}
         className="text-xs text-gray-500 hover:text-gray-700 px-1"
         title="Reset text color"
       >
@@ -194,7 +199,7 @@ const Toolbar = ({ editor }) => {
         <button
           key={color}
           type="button"
-          onClick={() => editor.chain().focus().toggleHighlight({ color }).run()}
+          onClick={() => editor.chain().focus().extendMarkRange('highlight').toggleHighlight({ color }).run()}
           className="w-5 h-5 rounded-full border border-gray-300"
           style={{ backgroundColor: color }}
           title={`Highlight ${color}`}
@@ -202,7 +207,7 @@ const Toolbar = ({ editor }) => {
       ))}
       <button
         type="button"
-        onClick={() => editor.chain().focus().unsetHighlight().run()}
+        onClick={() => editor.chain().focus().extendMarkRange('highlight').unsetHighlight().run()}
         className="text-xs text-gray-500 hover:text-gray-700 px-1"
         title="Remove highlight"
       >
