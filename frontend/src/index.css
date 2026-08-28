@@ -1,2 +1,23 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#root {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+	font-synthesis: none;
+}
+
+button:not(:disabled),
+label[for] {
+	cursor: pointer;
+}
+
+.dark body {
+	background: #0f172a;
+	color: #e2e8f0;
+}

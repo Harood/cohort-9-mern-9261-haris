@@ -5,11 +5,15 @@ import Dashboard from './pages/Dashboard';
 import NoteEditor from './pages/NoteEditor';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
+import AnimatedBackground from './components/AnimatedBackground';
+import { ThemeProvider } from './context/ThemeContext';
 
 
 function App() {
   return (
-    <Routes>
+    <ThemeProvider>
+      <AnimatedBackground />
+      <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route
@@ -45,7 +49,8 @@ function App() {
           </ProtectedRoute>
         }
       />
-    </Routes>
+      </Routes>
+    </ThemeProvider>
   );
 }
 
